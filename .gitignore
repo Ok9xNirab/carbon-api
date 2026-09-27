@@ -9,6 +9,7 @@ dist/
 .venv/
 .env
 .env.*
+!.env.example
 
 # tooling caches
 .pytest_cache/

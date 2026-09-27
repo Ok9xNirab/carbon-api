@@ -25,3 +25,9 @@ uv run ruff check .              # lint
 uv run ruff format .             # format
 uv run pre-commit install        # enable git pre-commit hook (ruff check + format)
 ```
+
+## Configuration
+
+Settings live in `carbon/settings.py` and are read from `CARBON_*` environment variables or a
+`.env` file. Copy `.env.example` to `.env` to start; every key has a safe local default. Inject
+settings with `Depends(get_settings)`.

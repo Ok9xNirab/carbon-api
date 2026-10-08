@@ -1,0 +1,503 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Carbon API",
+    "version": "0.1.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "CheckRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "side_a": {
+            "discriminator": {
+              "mapping": {
+                "text": "#/components/schemas/TextInput",
+                "url": "#/components/schemas/UrlInput"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/TextInput"
+              },
+              {
+                "$ref": "#/components/schemas/UrlInput"
+              }
+            ],
+            "title": "Side A"
+          },
+          "side_b": {
+            "anyOf": [
+              {
+                "discriminator": {
+                  "mapping": {
+                    "text": "#/components/schemas/TextInput",
+                    "url": "#/components/schemas/UrlInput"
+                  },
+                  "propertyName": "type"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/TextInput"
+                  },
+                  {
+                    "$ref": "#/components/schemas/UrlInput"
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Side B"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/Mode",
+            "default": "compare"
+          },
+          "include_paraphrase": {
+            "default": true,
+            "title": "Include Paraphrase",
+            "type": "boolean"
+          },
+          "include_layout": {
+            "default": false,
+            "title": "Include Layout",
+            "type": "boolean"
+          },
+          "strictness": {
+            "$ref": "#/components/schemas/Strictness",
+            "default": "balanced"
+          }
+        },
+        "required": [
+          "side_a"
+        ],
+        "title": "CheckRequest",
+        "type": "object"
+      },
+      "CheckResult": {
+        "additionalProperties": false,
+        "properties": {
+          "overall_similarity": {
+            "description": "Share of side A covered by any match.",
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Overall Similarity",
+            "type": "integer"
+          },
+          "side_a": {
+            "$ref": "#/components/schemas/SideResult"
+          },
+          "side_b": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SideResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "passages": {
+            "items": {
+              "$ref": "#/components/schemas/MatchedPassage"
+            },
+            "title": "Passages",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LayoutScores"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Null when layout comparison was off or not possible."
+          }
+        },
+        "required": [
+          "overall_similarity",
+          "side_a",
+          "side_b",
+          "passages",
+          "sources",
+          "layout"
+        ],
+        "title": "CheckResult",
+        "type": "object"
+      },
+      "HighlightSpan": {
+        "additionalProperties": false,
+        "properties": {
+          "start": {
+            "minimum": 0,
+            "title": "Start",
+            "type": "integer"
+          },
+          "end": {
+            "minimum": 0,
+            "title": "End",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MatchKind"
+          },
+          "passage_id": {
+            "title": "Passage Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "kind",
+          "passage_id"
+        ],
+        "title": "HighlightSpan",
+        "type": "object"
+      },
+      "Job": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "progress": {
+            "default": 0,
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Progress",
+            "type": "integer"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Error"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "progress",
+          "error",
+          "created_at"
+        ],
+        "title": "Job",
+        "type": "object"
+      },
+      "JobStatus": {
+        "enum": [
+          "queued",
+          "fetching",
+          "comparing",
+          "done",
+          "failed"
+        ],
+        "title": "JobStatus",
+        "type": "string"
+      },
+      "LayoutScores": {
+        "additionalProperties": false,
+        "properties": {
+          "overall": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Overall",
+            "type": "integer"
+          },
+          "grid": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Grid",
+            "type": "integer"
+          },
+          "type_scale": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Type Scale",
+            "type": "integer"
+          },
+          "components": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Components",
+            "type": "integer"
+          },
+          "palette": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Palette",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "overall",
+          "grid",
+          "type_scale",
+          "components",
+          "palette"
+        ],
+        "title": "LayoutScores",
+        "type": "object"
+      },
+      "MatchKind": {
+        "enum": [
+          "near_identical",
+          "paraphrased"
+        ],
+        "title": "MatchKind",
+        "type": "string"
+      },
+      "MatchedPassage": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MatchKind"
+          },
+          "similarity": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Similarity",
+            "type": "integer"
+          },
+          "text": {
+            "description": "The passage as it appears in side A.",
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_url": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Source Url",
+            "type": "string"
+          },
+          "published_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "When the source page was first published, if known.",
+            "title": "Published Date"
+          },
+          "edit_summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "examples": [
+              "Four of nine words substituted, order preserved"
+            ],
+            "title": "Edit Summary"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "similarity",
+          "text",
+          "source_id",
+          "source_url",
+          "published_date",
+          "edit_summary"
+        ],
+        "title": "MatchedPassage",
+        "type": "object"
+      },
+      "Mode": {
+        "enum": [
+          "compare",
+          "discover"
+        ],
+        "title": "Mode",
+        "type": "string"
+      },
+      "SideResult": {
+        "additionalProperties": false,
+        "description": "One side as it was compared: the extracted text the spans index into.",
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "format": "uri",
+                "maxLength": 2083,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Set when the side was submitted as a URL.",
+            "title": "Url"
+          },
+          "word_count": {
+            "minimum": 0,
+            "title": "Word Count",
+            "type": "integer"
+          },
+          "spans": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/HighlightSpan"
+            },
+            "title": "Spans",
+            "type": "array"
+          }
+        },
+        "required": [
+          "text",
+          "url",
+          "word_count",
+          "spans"
+        ],
+        "title": "SideResult",
+        "type": "object"
+      },
+      "Source": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "pct_of_a": {
+            "description": "Share of side A assigned to this source; spans are never double counted.",
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Pct Of A",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "domain",
+          "pct_of_a"
+        ],
+        "title": "Source",
+        "type": "object"
+      },
+      "Strictness": {
+        "enum": [
+          "lenient",
+          "balanced",
+          "strict"
+        ],
+        "title": "Strictness",
+        "type": "string"
+      },
+      "TextInput": {
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "text",
+            "default": "text",
+            "title": "Type",
+            "type": "string"
+          },
+          "text": {
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "TextInput",
+        "type": "object"
+      },
+      "UrlInput": {
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "const": "url",
+            "default": "url",
+            "title": "Type",
+            "type": "string"
+          },
+          "url": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "UrlInput",
+        "type": "object"
+      }
+    }
+  }
+}

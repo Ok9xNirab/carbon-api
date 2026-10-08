@@ -1,0 +1,112 @@
+{
+  "overall_similarity": 63,
+  "side_a": {
+    "text": "Every brand deserves a system, not a style guide. We build design systems that scale from a single landing page to a product suite of forty screens, without losing the thread. Our team has shipped systems for fintech, healthcare and logistics clients across eleven countries. The result is a shared language your designers and your engineers both trust. Work with us and you get the system, the documentation, and the team that knows how to keep it alive.",
+    "url": null,
+    "word_count": 78,
+    "spans": [
+      {
+        "start": 50,
+        "end": 175,
+        "kind": "near_identical",
+        "passage_id": "p1"
+      },
+      {
+        "start": 176,
+        "end": 275,
+        "kind": "paraphrased",
+        "passage_id": "p2"
+      },
+      {
+        "start": 354,
+        "end": 455,
+        "kind": "paraphrased",
+        "passage_id": "p3"
+      }
+    ]
+  },
+  "side_b": {
+    "text": "Brands need a system, not another style guide. We build design systems that scale from one landing page to a product suite of forty screens, and never lose the thread. Our team has delivered systems for fintech, health and logistics clients in eleven countries. Everything is documented so nobody has to guess. Hire us and you get the system, the docs, and a team that keeps it alive.",
+    "url": "https://novastack.io/",
+    "word_count": 68,
+    "spans": [
+      {
+        "start": 47,
+        "end": 167,
+        "kind": "near_identical",
+        "passage_id": "p1"
+      },
+      {
+        "start": 168,
+        "end": 261,
+        "kind": "paraphrased",
+        "passage_id": "p2"
+      },
+      {
+        "start": 311,
+        "end": 384,
+        "kind": "paraphrased",
+        "passage_id": "p3"
+      }
+    ]
+  },
+  "passages": [
+    {
+      "id": "p1",
+      "kind": "near_identical",
+      "similarity": 91,
+      "text": "We build design systems that scale from a single landing page to a product suite of forty screens, without losing the thread.",
+      "source_id": "s1",
+      "source_url": "https://novastack.io/services",
+      "published_date": "2024-03-14",
+      "edit_summary": null
+    },
+    {
+      "id": "p2",
+      "kind": "paraphrased",
+      "similarity": 78,
+      "text": "Our team has shipped systems for fintech, healthcare and logistics clients across eleven countries.",
+      "source_id": "s1",
+      "source_url": "https://novastack.io/about",
+      "published_date": null,
+      "edit_summary": "Four of nine words substituted, order preserved"
+    },
+    {
+      "id": "p3",
+      "kind": "paraphrased",
+      "similarity": 64,
+      "text": "Work with us and you get the system, the documentation, and the team that knows how to keep it alive.",
+      "source_id": "s2",
+      "source_url": "https://archive.designcollective.co/manifesto",
+      "published_date": null,
+      "edit_summary": "Closing paragraph, structure retained"
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "name": "Nova Stack",
+      "domain": "novastack.io",
+      "pct_of_a": 41
+    },
+    {
+      "id": "s2",
+      "name": "Design Collective (archived)",
+      "domain": "archive.designcollective.co",
+      "pct_of_a": 14
+    },
+    {
+      "id": "s3",
+      "name": "Medium — “Systems over styles”",
+      "domain": "medium.com",
+      "pct_of_a": 8
+    }
+  ],
+  "layout": {
+    "overall": 47,
+    "grid": 62,
+    "type_scale": 55,
+    "components": 44,
+    "palette": 31
+  }
+}

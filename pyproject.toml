@@ -13,6 +13,11 @@ dependencies = [
     "trafilatura>=2.3.1",
 ]
 
+[project.optional-dependencies]
+render = [
+    "playwright>=1.63.0",
+]
+
 [dependency-groups]
 dev = [
     "pre-commit",
@@ -33,6 +38,9 @@ packages = ["src/carbon"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+# Slow tests (e.g. real browser renders) only run when asked for: `uv run pytest -m slow`.
+addopts = ["-m", "not slow"]
+markers = ["slow: needs real external tooling such as Chromium; deselected by default"]
 
 [tool.ruff]
 target-version = "py312"

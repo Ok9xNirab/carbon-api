@@ -118,7 +118,8 @@ async def resolve_host(host: str, port: int) -> list[str]:
     return [str(info[4][0]) for info in infos]
 
 
-def _parse(url: str | httpx.URL) -> httpx.URL:
+def parse_url(url: str | httpx.URL) -> httpx.URL:
+    """Parse ``url``, rejecting non-http(s) schemes, missing hosts and embedded credentials."""
     try:
         parsed = httpx.URL(url)
     except httpx.InvalidURL as exc:
@@ -132,8 +133,26 @@ def _parse(url: str | httpx.URL) -> httpx.URL:
     return parsed.copy_with(fragment=None)
 
 
-def _port(url: httpx.URL) -> int:
+def url_port(url: httpx.URL) -> int:
     return url.port or (443 if url.scheme == "https" else 80)
+
+
+async def resolve_public(
+    host: str,
+    port: int,
+    resolver: Resolver = resolve_host,
+    allow: Callable[[str], bool] = is_public_ip,
+) -> list[str]:
+    """Addresses of ``host``, provided every one of them passes ``allow``."""
+    try:
+        addresses = await resolver(host, port)
+    except OSError as exc:
+        raise FetchFailed("could not resolve host") from exc
+    if not addresses:
+        raise FetchFailed("could not resolve host")
+    if not all(allow(a) for a in addresses):
+        raise BlockedURL("host resolves to a non-public address")
+    return addresses
 
 
 def _media_type(response: httpx.Response) -> str:
@@ -198,7 +217,7 @@ class Fetcher:
 
     async def fetch(self, url: str) -> FetchResult:
         """Fetch an HTML page, following up to ``max_redirects`` redirects."""
-        start = _parse(url)
+        start = parse_url(url)
         try:
             async with asyncio.timeout(self._total_timeout):
                 body = await self._follow(start, self._read_html, check_robots=True)
@@ -232,7 +251,7 @@ class Fetcher:
                 raise FetchFailed("network error") from exc
             try:
                 if response.is_redirect:
-                    url = _parse(url.join(response.headers["location"]))
+                    url = parse_url(url.join(response.headers["location"]))
                     continue
                 return await read(url, response)
             finally:
@@ -241,14 +260,7 @@ class Fetcher:
 
     async def _pinned_request(self, url: httpx.URL) -> httpx.Request:
         """Request for ``url`` that connects to a vetted public IP of its host."""
-        try:
-            addresses = await self._resolve(url.host, _port(url))
-        except OSError as exc:
-            raise FetchFailed("could not resolve host") from exc
-        if not addresses:
-            raise FetchFailed("could not resolve host")
-        if not all(is_public_ip(a) for a in addresses):
-            raise BlockedURL("host resolves to a non-public address")
+        addresses = await resolve_public(url.host, url_port(url), self._resolve)
         extensions = {"sni_hostname": url.host} if url.scheme == "https" else {}
         return self._client.build_request(
             "GET",

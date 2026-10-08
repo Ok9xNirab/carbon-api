@@ -26,6 +26,15 @@ uv run ruff format .             # format
 uv run pre-commit install        # enable git pre-commit hook (ruff check + format)
 ```
 
+Rendering JavaScript-built pages needs the optional `render` extra (Playwright) and a Chromium
+build. Its browser tests are marked `slow` and deselected by default:
+
+```bash
+uv sync --extra render
+uv run playwright install chromium
+uv run pytest -m slow                # real-browser tests
+```
+
 ## Configuration
 
 Settings live in `carbon/settings.py` and are read from `CARBON_*` environment variables or a

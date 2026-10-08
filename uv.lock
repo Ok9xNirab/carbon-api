@@ -48,6 +48,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
+    { name = "htmldate" },
     { name = "httpx" },
     { name = "lxml" },
     { name = "pydantic" },
@@ -72,6 +73,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi" },
+    { name = "htmldate", specifier = ">=1.11.0" },
     { name = "httpx" },
     { name = "lxml", specifier = ">=6.1.3" },
     { name = "playwright", marker = "extra == 'render'", specifier = ">=1.63.0" },
